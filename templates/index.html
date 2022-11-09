@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Streaming </title>
+    <link href="/static/css/style.css" rel="stylesheet">
+  </head>
+  <body >
+    <!-- <h1>Streaming </h1> -->
+    <figure class="textover">
+      <img src="{{ url_for('video_feed') }}" class="center-m_img"/>
+      <img src="{{ url_for('video_feed_side') }}" class="corner-m_img"/>
+      <img src="static/images/KovaaK-Crosshair.png" class="center-crosshair"/>
+      <figcaption class="right">{{j1}}, {{j2}}, {{j3}}, {{j4}}<br>1x</figcaption>
+      <figcaption class="left">STFT<br>CTL</figcaption>
+    </figure>
+    <form>
+      <input type="submit" name="red" value="Pick up red blocks"> 
+      <input type="submit" name="blue" value="Pick up blue blocks">
+    </form>
+  </body>
+</html>

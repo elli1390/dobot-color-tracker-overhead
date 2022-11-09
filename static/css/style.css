@@ -1,0 +1,53 @@
+body {
+    background-color: black;
+}
+
+/* (B) RESPONSIVE IMAGE */
+.textover .center-m_img {
+    width: 95%; 
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.textover .corner-m_img {
+    width: 15%; 
+    position: absolute;
+    right: 2.5%;
+    top:0%;
+}
+
+.textover .center-crosshair {
+    width: 10%; 
+    position: absolute;
+    left: 45%;
+    top:  40%;
+}
+
+/* (C) POSITION CAPTION */
+.textover { 
+    position: relative; 
+} /* REQUIRED */
+
+.textover figcaption {
+    position: absolute;
+}
+
+.textover .left {
+    top: 40%;
+    left: 10%;
+}
+.textover .right {
+    top: 40%;
+    right: 10%
+}
+
+/* (D) CAPTION COSMETICS */
+.textover figcaption {
+    box-sizing: border-box;
+    padding: 10px;
+    color: rgb(242, 255, 0);
+    opacity: 0.7;
+    font-family: system-ui;
+    font-size: 50px;
+  }
