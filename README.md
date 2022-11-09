@@ -1,4 +1,4 @@
-# dobot-color-picking
+# dobot-color-tracker-overhead
 Flask app that streams feed from an overhead camera at a specific position and uses OpenCV to drive colored object tracking with a Dobot Magician Lite
 ## Summary
 ### Documentation forthcoming
