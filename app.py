@@ -102,11 +102,12 @@ def generate_frames( mask:"bool"=False):
     high_color = np.array([179, 255, 255])
     # low_color = np.array([40, 155, 84]) # Green
     # high_color = np.array([80, 255, 255])
-
+    # low_color = np.array([95, 155, 84]) # Blue
+    # high_color = np.array([130, 255, 255])
     # low_color = np.array([20, 150, 140]) # Yellow
     # high_color = np.array([50, 255, 255]) # WARNING: YELLOW REQUIRES GOOD/NEUTRAL LIGHTING
 
-    theta_avg = []
+    frame_num = 0
     
     while stream:
         # Read the camera frame
@@ -137,7 +138,7 @@ def generate_frames( mask:"bool"=False):
                     (x, y, w, h) = cv2.boundingRect(contour)
                     x_medium = int((x + x + w) / 2) # middle line must be int since pixels are ints
                     y_medium = int((y + y + h) / 2) 
-                    dist = np.sqrt(np.power(x_medium-x_center, 2) + np.power(y_medium-old_y_center, 2)) # 2d distance calc for object centroid to center of screen
+                    dist = np.sqrt(np.power(x_medium - x_center, 2) + np.power(y_medium - old_y_center, 2)) # 2d distance calc for object centroid to center of screen
                     largeContourPairs.append((contour, dist)) # append a contour, dist pair
                     found = False
             largeContourPairs = sorted(largeContourPairs, key=lambda largeContourPairs : largeContourPairs[1]) # Sort by dist
@@ -146,19 +147,25 @@ def generate_frames( mask:"bool"=False):
                 (x, y, w, h) = cv2.boundingRect(cnt)
                 x_medium = int((x + x + w) / 2) # middle line must be int since pixels are ints
                 y_medium = int((y + y + h) / 2)
-                r_medium = np.sqrt(np.power(x_medium-x_center, 2) + np.power(y_medium-320, 2))
-                theta_medium = -np.degrees(np.arctan((x_medium-x_center) / (320-y_medium)))
-                print(x_medium, y_medium)
-                if len(theta_avg) < 30:
+                r_medium = np.sqrt(np.power(x_medium - x_center, 2) + np.power(y_medium - 320, 2)) # 2d distance calc from object centroid to bottom center of screen
+                theta_medium = -np.degrees(np.arctan((x_medium - x_center) / (320 - y_medium))) # polar angle of object centroid with pole at bottom center of screen and polar axis being vertical line, left half is positive, right half negative (see exhibit manual)
+                # print(x_medium, y_medium)
+                if frame_num < 30:
                     x1, y1, z1, r1, j11, j21, j31, j41 = device.pose()
-                    device.rotate_joint(1.3 * theta_medium, 0, 0, 66)
+                    device.rotate_joint(1.3 * theta_medium, 0, 0, 66) # rotates j1 to ready arm for grab (makes it look like the arm is honing in)
                     time.sleep(1/60)
-                    theta_avg.append(theta_medium)
-                elif len(theta_avg) == 30:
-                    device.move_to(x=1.25 * (320-y_medium), y=1.7 * (x_center-x_medium), z=0, r=r1, wait=True)
+                    frame_num += 1
+                elif frame_num == 30: # grabs after 30 frames
+                    # converts the image coordinates to Dobot coordinates
+                    x_multiplier = 1.25
+                    y_multiplier = 1.55
+                    to_x = x_multiplier * (320 - y_medium)
+                    to_y = y_multiplier * (x_center - x_medium)
+                    # print(to_x, to_y)
+                    device.move_to(x=to_x, y=to_y, z=0, r=r1, wait=True)
                     grab()
                     j1, j2, j3, j4 = 0, 0, 0, 66
-                    theta_avg = []
+                    frame_num = 0
                 # print(x_medium, y_medium)
                 # cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
                 break # Just interested in first sorted (used to be on biggest, now it's on closest) rectangle/lines
